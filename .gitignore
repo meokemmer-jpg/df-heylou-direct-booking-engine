@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+*.egg-info/
+runs/
+output/
+learnings/
+.venv/
+STOP.flag
+*.secret
+.env
+stripe-keys/

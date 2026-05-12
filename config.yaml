@@ -1,0 +1,129 @@
+# DF-HeyLou-Direct-Booking-Engine Configuration [CRUX-MK]
+# Welle-40 Foundation-DF: Profit-Layer #2 (K_0-CRITICAL Stripe-Echtgeld)
+
+df_id: DF-HEYLOU-DIRECT-BOOKING
+df_name: heylou-direct-booking-engine
+version: 0.1.0-SKELETON
+status: PRE-PRODUCTION-CONDITIONAL
+crux-mk: true
+
+# === K_0-Touch (Welle-40 CRITICAL) ===
+k0_touch: true
+k0_caveats:
+  - "Stripe-Echtgeld-Charge (Real-Mode)"
+  - "Direct-Booking-Revenue-Stream (Hotelier-Income)"
+  - "Cancellation-Refund-Mechanik (Liability)"
+  - "DSGVO-Gast-Daten-Handling"
+phronesis_required: true
+sandbox_default: true
+
+description: |
+  Direct-Booking-Pipeline (Anti-OTA-Kommission). Pipeline:
+  Search → Reserve → Confirm → Stripe-Charge → Cancellation-Policy → Audit.
+  Reuse _df_common.stripe_hmac_verifier (Welle-35-PLUS).
+
+# === Tier-2 Pflicht-Check ===
+tier_2_check:
+  lambda_per_month_estimate: 300  # 1 Hotel x 10 Bookings/Tag
+  narrow_scope: "Direct-Booking Search+Reserve+Confirm+Charge+Cancel + Audit"
+  determinism: 0.90  # Webhook-Flow deterministisch
+  rollback_seconds: 30
+  test_coverage_target: 0.90
+  k0_protected: false  # K_0-Touch CRITICAL
+  q0_measurable: true
+  escalation_after_n_fails: 2  # K_0-strenger
+  rho_budget_eur_day: 0  # Sandbox Mock-Charges
+  audit_trail: branch-hub/audit/df-heylou-direct-booking.jsonl
+
+# === K11-K16 ===
+k11_cascade_containment:
+  cascade_isolation: hard
+  failure_blast_radius: 0
+  dependency_dlq_strategy: "Per-Booking-DLQ + Stripe-Webhook-Retry-Queue"
+
+k12_distillation_resistenz:
+  output_feeds_into_training: false
+  provenance_required_in_output: true
+  non_llm_validation_layer: stripe-hmac-verification
+  pii_scrubbing_enabled: true  # Gast-Daten DSGVO
+
+k13_independent_ground_truth:
+  external_anchor_type: financial_market_data  # Stripe-API
+  external_anchor_validation_frequency: "per Charge via HMAC-Verification"
+  pre_action_domain_check:
+    env_tag: "test-keys/live-keys check pre-charge"
+    mount_point: "Stripe-API-Endpoint (test vs live)"
+    network_region: "stripe.com SSL-pinning"
+  pre_action_backup_check:
+    backup_status: "previous bookings persistent in audit"
+    replication_lag: "n/a (idempotent via idempotency-key)"
+  pre_action_blast_radius_check:
+    blast_radius: "1 Charge pro Booking-Action"
+    reversibility_class: "side-effect (Charge = real-money; Refund moeglich aber kostet)"
+
+k14_human_override_decay:
+  override_complexity: multi_step  # K_0-strenger
+  override_documentation_freshness_days: 14  # K_0-strenger
+  martin_review_cadence: "daily Booking-Review in Hildesheim-Pilot"
+  bus_factor_handover_drilled: false
+
+k15_entropy_budget:
+  entropy_added_loc_estimate: 1100
+  entropy_added_concepts:
+    - BookingRequest
+    - BookingConfirmation
+    - StripeChargeIntent
+    - CancellationPolicy
+    - WalletUSPMetric
+  entropy_justified_by_rho: "+EUR 20-40k/J Year-1, +EUR 200-400k/J Year-3 5-Hotel"
+  entropy_subtractive_potential: "Ersetzt 18-20% OTA-Kommission"
+
+k16_concurrent_spawn_mutex:
+  concurrent_spawn_protection: both
+  lock_dir: /tmp/df-heylou-direct-booking.lock
+  lock_stale_age_h: 6
+  engine_pgrep_check: true
+  lock_release_on: EXIT_INT_TERM
+
+# === LC1-LC5 ===
+lose_coupling:
+  LC1_graceful_degradation:
+    degradation_modes:
+      - full              # Stripe-Live + Real-PMS-Lookup
+      - degraded_stripe   # Test-Keys-Mode, simulated charges
+      - degraded_pms      # Read-only PMS, no auto-block
+      - standalone        # nur Audit-Log + manual followup
+    degradation_test_required: true
+  LC2_direct_mode:
+    direct_mode_available: true
+    direct_mode_capability: 0.50
+    direct_mode_trigger: "Stripe-API unreachable >30s"
+  LC3_circuit_breaker:
+    circuit_breaker_timeout_s: 30
+    circuit_breaker_open_threshold: 2  # K_0-strenger
+    circuit_breaker_half_open_test_interval_s: 600  # 10 Min K_0
+  LC4_failure_isolation:
+    state_externalization: true
+    idempotent_operations: true
+    dependency_dlq_separate: true
+  LC5_health_check:
+    health_check_dependencies: []
+    health_check_degraded_score: 0.5
+    health_check_endpoint_or_file: "branch-hub/state/df-heylou-direct-booking-health.json"
+
+# === ENV-Vars ===
+env_vars:
+  DF_HEYLOU_DIRECT_BOOKING_REAL_STRIPE_ENABLED:
+    default: false
+    description: "Real-Stripe-Mode (PHRONESIS_TICKET Pflicht!)"
+  DF_HEYLOU_DIRECT_BOOKING_SANDBOX_MODE:
+    default: true
+    description: "Sandbox = Stripe-Test-Keys; Production = Live-Keys"
+  STRIPE_WEBHOOK_SECRET:
+    required_for_real: true
+    format: "whsec_..."
+  PHRONESIS_TICKET:
+    required_for_real: true
+    format: "PT-YYYY-MM-DD-NNN"
+
+[CRUX-MK]
