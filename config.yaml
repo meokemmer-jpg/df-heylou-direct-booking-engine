@@ -22,6 +22,26 @@ description: |
   Search → Reserve → Confirm → Stripe-Charge → Cancellation-Policy → Audit.
   Reuse _df_common.stripe_hmac_verifier (Welle-35-PLUS).
 
+# === Default-Action (per ausreden-schutz.md Schicht 2, Welle-47 Migration Batch-2) ===
+default_action:
+  description: "Direct-Booking-Pipeline: Search → Reserve → Confirm → Stripe-HMAC-verified-Charge → Cancellation-Policy → Audit. K_0-CRITICAL Stripe-Echtgeld nur via PHRONESIS-Ticket"
+  rho_per_run_eur: 250
+  rho_validation_source: unvalidated
+  block_gates:
+    - gate_id: K14
+      block_reason: "K_0-CRITICAL Stripe-Echtgeld: sandbox_default=true + Phronesis-Required + escalation_after_n_fails=2 (strenger)"
+      false_block_cost_eur: 200
+      legitimate_block_condition: "Real-Stripe-Charge ohne PHRONESIS_TICKET ODER ohne HMAC-Verification"
+    - gate_id: K13_PAV
+      block_reason: "Pre-Action-Verification: stripe_endpoint + amount_eur + idempotency_key Pflicht VOR jeder Charge"
+      false_block_cost_eur: 150
+      legitimate_block_condition: "env_tag=prod ohne Stripe-Webhook-HMAC-Validation ODER ohne Replay-Protection"
+    - gate_id: K11
+      block_reason: "Cascade-Containment: Booking-Failure darf nicht Pricing/PMS beeinflussen, isolated DLQ"
+      false_block_cost_eur: 80
+      legitimate_block_condition: "Stripe-Outage triggert Cross-DF-Cascade (failure_blast_radius>0)"
+  graceful_degradation_path: "Sandbox-Mock-Stripe-Charges (Test-Mode-Cards), Mock-Cancellation-Refunds, kein Real-Gastdaten-Handling"
+
 # === Tier-2 Pflicht-Check ===
 tier_2_check:
   lambda_per_month_estimate: 300  # 1 Hotel x 10 Bookings/Tag
