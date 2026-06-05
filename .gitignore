@@ -10,3 +10,11 @@ STOP.flag
 *.secret
 .env
 stripe-keys/
+*.env
+*.db
+*.sqlite
+*.sqlite3
+*.key
+*.pem
+secrets.json
+credentials.json
