@@ -1,99 +1,105 @@
 # df-heylou-direct-booking-engine — PRODUKTION [CRUX-MK]
-*2026-06-07T00:56:08.577779+00:00 | ollama-local/kemmer-70b-ctx8k*
+*2026-06-07T13:17:06.585948+00:00 | ollama-local/kemmer-70b-ctx8k*
 
 # DF-HeyLou-Direct-Booking-Engine
-## Dokumentation und Implementierung
+## Überblick
 
-Die DF-HeyLou-Direct-Booking-Engine ist eine zentrale Komponente der Welle-
-Welle-40-Mosaikstrategie, die darauf abzielt, die Gewinnspanne von Hotels d
-durch die Reduzierung von OTA-Kommissionen zu erhöhen. Im Folgenden wird di
-die Dokumentation und Implementierung dieser Engine vorgestellt.
+Die DF-HeyLou-Direct-Booking-Engine ist ein zentrales Element der Welle-40-
+Welle-40-Mosaikstrategie, das darauf abzielt, die Gewinnspanne von Hotels d
+durch die Implementierung einer Direktbuchungspipeline zu erhöhen. Diese Pi
+Pipeline soll den traditionellen Online-Reisebüros (OTAs) entgegenwirken un
+und somit die Kommissionen reduzieren, die diese anfallen lassen.
 
-### Mission
+## Systemarchitektur
 
-Die Mission der DF-HeyLou-Direct-Booking-Engine besteht darin, eine Direktb
-Direktbuchungspipeline zu implementieren, um den 12%-20% OTA-Kommissionen e
-entgegenzuwirken. Dies soll durch die Entwicklung einer sicheren und effizi
-effizienten Buchungsplattform erreicht werden, die es Hotels ermöglicht, di
-direkt mit ihren Gästen in Kontakt zu treten und somit die Gewinnspanne zu 
-erhöhen.
+Die Architektur der DF-HeyLou-Direct-Booking-Engine ist modular aufgebaut, 
+um eine maximale Flexibilität und Skalierbarkeit zu gewährleisten. Die folg
+folgenden Komponenten bilden das Herzstück des Systems:
 
-### Systemarchitektur
+* **Direct_Booking_Engine.py**: Diese Komponente ist für die Durchführung d
+der Buchungsprozesse verantwortlich. Sie umfasst die Suche nach Verfügbarke
+Verfügbarkeiten, die Reservierung von Zimmern und die Bestätigung der Buchu
+Buchungen.
+* **Stripe_Integration.py**: Diese Komponente ermöglicht die Integration mi
+mit dem Zahlungsdienstleister Stripe, um sicherzustellen, dass alle Transak
+Transaktionen reibungslos und sicher abgewickelt werden.
+* **Cancellation_Policy_Engine.py**: Diese Komponente ist für die Verwaltun
+Verwaltung der Stornierungsrichtlinien verantwortlich. Sie ermöglicht es Ho
+Hotels, ihre eigenen Richtlinien festzulegen und diese an die Bedürfnisse i
+ihrer Gäste anzupassen.
+* **Wallet_USP_Tracker.py**: Diese Komponente dient zur Verfolgung der Wall
+Wallet-USP (Unique Selling Proposition) gemäß der Martin-Direktive W34. Sie
+Sie hilft dabei, die einzigartigen Verkaufsvorteile des Hotels zu identifiz
+identifizieren und zu bewerben.
+* **Booking_Orchestrator.py**: Diese Komponente dient als Eintrittspunkt fü
+für den LaunchAgent und koordiniert die gesamte Buchungsprozesskette.
+* **Audit_Logger.py**: Diese Komponente ist für die Protokollierung aller T
+Transaktionen und sicherheitsrelevanten Ereignisse verantwortlich. Sie stel
+stellt sicher, dass alle Aktivitäten im System transparent und nachvollzieh
+nachvollziehbar sind.
 
-Die Booking-Pipeline ist modular aufgebaut und besteht aus den folgenden Ko
-Komponenten:
+## Kritische Schutzmaßnahmen
 
-* `direct_booking_engine.py`: Durchsuche→Buchen→Bestätigen→Belasten
-* `stripe_integration.py`: Verwendung von `_df_common.stripe_hmac_verifier`
-`_df_common.stripe_hmac_verifier` für Sicherheit
-* `cancellation_policy_engine.py`: Anpassung von Stornierungsrichtlinien an
-an Hotelbedingungen
-* `wallet_usp_tracker.py`: Verfolgung der Wallet-USP gemäß Martin-Direktive
-Martin-Direktive W34
-* `booking_orchestrator.py`: Eintrittspunkt für LaunchAgent
-* `audit_logger.py`: Protokollierung aller Transaktionen und sicherheitsrel
-sicherheitsrelevanter Ereignisse
+Um die Sicherheit des Systems zu gewährleisten, wurden verschiedene Schutzm
+Schutzmaßnahmen implementiert:
 
-### Kritische Schutzmaßnahmen
-
-Um die Sicherheit der Buchungsplattform zu gewährleisten, wurden folgende k
-kritische Schutzmaßnahmen implementiert:
-
-* **Real-Stripe-Schutz**: Standardmäßig deaktiviert (`DF_HEYLOU_DIRECT_BOOK
-(`DF_HEYLOU_DIRECT_BOOKING_REAL_STRIPE_ENABLED=false`)
-* **PHRONESIS-Ticket Erfordernis**: Bei Real-Chargen muss ein gültiges PHRO
-PHRONESIS-Ticket (`PT-...`) vorliegen
+* **Real-Stripe-Schutz**: Standardmäßig ist der Real-Stripe-Modus deaktivie
+deaktiviert (`DF_HEYLOU_DIRECT_BOOKING_REAL_STRIPE_ENABLED=false`). Dies be
+bedeutet, dass alle Transaktionen im Testmodus durchgeführt werden, um sich
+sicherzustellen, dass keine echten Zahlungen verarbeitet werden.
+* **PHRONESIS-Ticket-Erfordernis**: Bei Real-Chargen muss ein gültiges PHRO
+PHRONESIS-Ticket (`PT-...`) vorliegen. Dieses Ticket dient als Autorisierun
+Autorisierungsnachweis und stellt sicher, dass nur berechtigte Personen Zug
+Zugriff auf die Real-Daten haben.
 * **Sandbox-Modus**: Im Testmodus werden Stripe-Test-Schlüssel und Mock-Bet
-Mock-Beträge verwendet, um keine echten Transaktionen auszuführen
+Mock-Beträge verwendet, um keine echten Transaktionen auszuführen. Dies erm
+ermöglicht es, das System unter kontrollierten Bedingungen zu testen und si
+sicherzustellen, dass alle Funktionen korrekt arbeiten.
 * **HMAC-Verifizierung**: Sicherheitsüberprüfungen durch `_df_common.stripe
-`_df_common.stripe_hmac_verifier` zur Erkennung von Fälschungen
+`_df_common.stripe_hmac_verifier` zur Erkennung von Fälschungen. Dies stell
+stellt sicher, dass alle Transaktionen authentisch sind und nicht manipulie
+manipuliert wurden.
 * **Replay-Sicherheit**: Eine Toleranzzeit von 300 Sekunden um Replay-Angri
 Replay-Angriffe zu verhindern. Konstantzeitenvergleiche werden verwendet, u
-um vor laufender Zeitangriffen geschützt zu sein
+um vor laufender Zeitangriffen geschützt zu sein.
 
-### rho-Gewinn
+## rho-Gewinn
 
 Der erwartete Jahresgewinn durch die Entkommissionierung liegt bei:
 
-* 20.000-40.000 EUR/J für ein einzelnes Hotel im Pilotprojekt in Hildesheim
-Hildesheim
-* 200.000-400.000 EUR/J bei einer Skalierung auf fünf Hotels im d
-dritten Jahr
+* 20.000-40.000 EUR/J im ersten Jahr (Hildesheim-Pilot mit einem Hotel)
+* 200.000-400.000 EUR/J im dritten Jahr (Skalierung auf fünf Hotels)
 
-### Phronesis-Pflichten
-
-Um die DF-HeyLou-Direct-Booking-Engine zu betreiben, müssen folgende Phrone
-Phronesis-Pflichten erfüllt werden:
+## Phronesis-Pflichten
 
 1. **Stripe-API-Schlüssel**: Bereitstellung der notwendigen Schlüssel für d
-den Real-Datenmodus
+den Real-Datenmodus.
 2. **Stornierungsrichtlinien**: Die Hotels müssen spezifische Stornierungsb
 Stornierungsbedingungen genehmigen, um eine flexiblere Buchung zu gewährlei
-gewährleisten
+gewährleisten.
 
-### Implementierung
+## Implementierungsschritte
 
-Die Implementierung der DF-HeyLou-Direct-Booking-Engine erfolgt in folgende
-folgenden Schritten:
+Um die DF-HeyLou-Direct-Booking-Engine erfolgreich zu implementieren, sind 
+folgende Schritte erforderlich:
 
-1. **Setup von Stripe**: Einrichtung eines Stripe-Kontos und Erstellung von
-von Test-Schlüsseln
-2. **Implementierung der Buchungsplattform**: Entwicklung der Direktbuchung
-Direktbuchungspipeline mit den oben genannten Komponenten
-3. **Einbindung von PHRONESIS-Ticket**: Implementierung der PHRONESIS-Ticke
-PHRONESIS-Ticket-Überprüfung für Real-Chargen
-4. **Konfiguration von Sandbox-Modus**: Einrichtung des Sandbox-Modus für T
-Testzwecke
-5. **Test und Verifizierung**: Durchführung von Tests und Verifizierung der
-der Buchungsplattform
+1. **Systemkonfiguration**: Konfigurieren des Systems mit den notwendigen P
+Parametern, wie z.B. der Stripe-API-Schlüssel und dem PHRONESIS-Ticket.
+2. **Modulare Implementierung**: Implementieren der einzelnen Module, wie z
+z.B. der Direct_Booking_Engine und der Stripe_Integration.
+3. **Sicherheitstests**: Durchführen von Sicherheitstests, um sicherzustell
+sicherzustellen, dass das System vor Angriffen geschützt ist.
+4. **Pilotprojekt**: Durchführen eines Pilotprojekts mit einem Hotel, um di
+die Funktionalität des Systems zu testen und Verbesserungsmöglichkeiten zu 
+identifizieren.
+5. **Skalierung**: Skalieren des Systems auf fünf Hotels, um den erwarteten
+erwarteten Jahresgewinn zu erreichen.
 
-### Fazit
+## Fazit
 
-Die DF-HeyLou-Direct-Booking-Engine bietet eine sichere und effiziente Lösu
-Lösung für die Reduzierung von OTA-Kommissionen und die Erhöhung der Gewinn
-Gewinnspanne von Hotels. Durch die Implementierung kritischer Schutzmaßnahm
-Schutzmaßnahmen und die Erfüllung von Phronesis-Pflichten kann die Buchungs
-Buchungsplattform sicher und effizient betrieben werden. Der erwartete Jahr
-Jahresgewinn durch die Entkommissionierung liegt bei 20.000-40.000 EUR/J fü
-für ein einzelnes Hotel im Pilotprojekt in Hildesheim und bei 200.000-400.0
-200.000-400.000 EUR/J bei einer Skalierung auf fünf Hotels im dritten Jahr.
+Die DF-HeyLou-Direct-Booking-Engine ist ein leistungsfähiges System, das es
+es Hotels ermöglicht, ihre Gewinnspanne durch die Implementierung einer Dir
+Direktbuchungspipeline zu erhöhen. Durch die modulare Architektur und die k
+kritischen Schutzmaßnahmen wird sichergestellt, dass das System sicher und 
+effizient arbeitet. Die Implementierung des Systems erfordert sorgfältige P
+Planung und Ausführung, um den erwarteten Jahresgewinn zu erreichen.
