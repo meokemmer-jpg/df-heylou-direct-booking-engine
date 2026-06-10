@@ -1,9 +1,9 @@
 {
   "df": "df-heylou-direct-booking-engine",
-  "ts": "2026-06-09T00:00:50.077349+00:00",
+  "ts": "2026-06-09T16:47:31.907847+00:00",
   "ok": true,
-  "bytes": 5756,
+  "bytes": 5571,
   "model": "kemmer-14b-ctx8k",
   "mode": "produce",
-  "duration_s": 41.3
+  "duration_s": 41.8
 }
