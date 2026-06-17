@@ -147,3 +147,8 @@ env_vars:
     format: "PT-YYYY-MM-DD-NNN"
 
 [CRUX-MK]
+K13_external_anchor_type: verified_web_sources
+K13_external_anchor_validation_frequency: per_anchor_run
+K13_external_anchor_count: 1
+K13_external_anchor_evidence: https://9dots.ai/9os/
+K13_anchored_ts: 2026-06-16T14:50:00.896254+00:00
