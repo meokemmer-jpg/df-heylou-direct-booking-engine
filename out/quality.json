@@ -1,9 +1,9 @@
 {
   "df": "df-heylou-direct-booking-engine",
-  "ts": "2026-07-03T02:54:50.779693+00:00",
+  "ts": "2026-07-04T01:51:27.691541+00:00",
   "maturity": "TESTED",
   "maturity_level": 4,
   "evidence_grade": 4,
-  "wargame_verdict": "CONDITIONAL",
+  "wargame_verdict": null,
   "crux": "[CRUX-MK]"
 }
