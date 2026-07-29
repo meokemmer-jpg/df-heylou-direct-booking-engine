@@ -1,0 +1,6 @@
+{
+  "verdict": "HOLDS",
+  "reason": "Der Test nutzt die echte sqlite-backed Engine, prueft Replay-Idempotenz plus Persistenz ueber Instanzen und einen adversarialen OTA-Channel mit anderem Ergebnis und ohne Charge.",
+  "ts": "2026-07-29T00:23:45.572548+00:00",
+  "attempts": 1
+}
