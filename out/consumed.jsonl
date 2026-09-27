@@ -110,3 +110,4 @@
 {"ts": "2026-09-07T07:37:08.803668+00:00", "producer": "df-heylou-direct-booking-engine", "by": "df-artifact-collector", "purpose": "index", "crux": "[CRUX-MK]", "valid": true}
 {"ts": "2026-09-07T08:07:45.247866+00:00", "producer": "df-heylou-direct-booking-engine", "by": "df-artifact-collector", "purpose": "index", "crux": "[CRUX-MK]", "valid": true}
 {"ts": "2026-09-07T08:39:35.353488+00:00", "producer": "df-heylou-direct-booking-engine", "by": "df-artifact-collector", "purpose": "index", "crux": "[CRUX-MK]", "valid": true}
+{"ts": "2026-09-26T22:38:25.903966+00:00", "producer": "df-heylou-direct-booking-engine", "by": "df-domain-nlm-sync", "purpose": "nlm-board", "crux": "[CRUX-MK]", "valid": true}
